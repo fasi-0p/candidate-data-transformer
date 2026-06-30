@@ -14,6 +14,19 @@
 
 <br/>
 
+### 🌐 How to run- Web UI + REST API
+
+```bash
+python -m uvicorn src.api.app:app          # then open http://127.0.0.1:8000
+```
+```bash
+cd frontend
+npm run dev                                # then open http://localhost:5173
+```
+## 🎥 Demo Video
+
+[![Watch Demo](https://img.shields.io/badge/▶%20Watch-Demo-blue?style=for-the-badge)](https://drive.google.com/file/d/1IHl_6WbebPU8REyEFb0fIDU1LyG1ePDC/view?usp=drivesdk)
+
 ```
    📄 CSV ─┐
    📑 PDF ─┤
@@ -326,15 +339,6 @@ python -m pip install -e ".[api,dev]"
 
 ---
 
-### 🌐 Web UI + REST API
-
-```bash
-python -m uvicorn src.api.app:app          # then open http://127.0.0.1:8000
-```
-```bash
-cd frontend
-npm run dev                                # then open http://localhost:5173
-```
 
 One process serves the REST API **and** a minimal single-page UI. Upload a CSV and/or resume, expand any field in the **Canonical Inspector** to see its winning source, agreements, and the conflicts that lost — then re-project live *without re-running the pipeline*.
 
