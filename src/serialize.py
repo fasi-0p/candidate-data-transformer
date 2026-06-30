@@ -50,5 +50,6 @@ def candidate_to_dict(c: CanonicalCandidate) -> dict:
         "phones": [tracked_to_dict(x) for x in c.phones],
         "skills": [tracked_to_dict(x) for x in c.skills],
         "links": [tracked_to_dict(x) for x in c.links],
+        "education": [tracked_to_dict(x) for x in c.education],
         "record_confidence": round(c.record_confidence, 4),
     }

@@ -88,9 +88,16 @@ def list_projections() -> dict:
 async def run_pipeline(
     csv: list[UploadFile] = File(default=[]),
     resume: list[UploadFile] = File(default=[]),
+    ats: list[UploadFile] = File(default=[]),    # ATS export JSON file(s)
+    notes: list[UploadFile] = File(default=[]),  # recruiter notes .txt file(s)
+    github: list[str] = Form(default=[]),        # GitHub profile URL(s)
+    linkedin: list[str] = Form(default=[]),      # LinkedIn id to VERIFY (not a source)
 ) -> dict:
-    if not csv and not resume:
-        raise HTTPException(400, "provide at least one csv or resume file")
+    github = [u for u in github if u.strip()]
+    linkedin_id = next((u.strip() for u in linkedin if u.strip()), None)
+    if not csv and not resume and not ats and not notes and not github:
+        raise HTTPException(
+            400, "provide at least one csv/resume/ats/notes file or github url")
 
     sources: list[Source] = []
     temps: list[str] = []
@@ -103,8 +110,18 @@ async def run_pipeline(
             path = _save_temp(up, ".pdf")
             temps.append(path)
             sources.append(Source("resume_pdf", path))
+        for up in ats:
+            path = _save_temp(up, ".json")
+            temps.append(path)
+            sources.append(Source("ats_json", path))
+        for up in notes:
+            path = _save_temp(up, ".txt")
+            temps.append(path)
+            sources.append(Source("notes", path))
+        for url in github:
+            sources.append(Source("github", url.strip()))
 
-        result = run(sources)
+        result = run(sources, linkedin_id=linkedin_id)
     finally:
         for path in temps:
             try:

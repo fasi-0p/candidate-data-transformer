@@ -27,6 +27,19 @@ def build_parser() -> argparse.ArgumentParser:
                    help="CSV source (repeatable)")
     p.add_argument("--resume", action="append", default=[], metavar="PATH",
                    help="resume PDF source (repeatable)")
+    p.add_argument("--ats", action="append", default=[], metavar="PATH",
+                   help="ATS export JSON source (repeatable)")
+    p.add_argument("--notes", action="append", default=[], metavar="PATH",
+                   help="recruiter notes .txt source (repeatable)")
+    p.add_argument("--github", action="append", default=[], metavar="USER|URL|PATH",
+                   help="GitHub username or profile URL (fetched from the public "
+                        "API), or a local profile JSON file. If the fetched handle "
+                        "disagrees with the resume's, confidence is penalized "
+                        "(repeatable)")
+    p.add_argument("--linkedin-id", metavar="URL|HANDLE",
+                   help="LinkedIn id (handle or URL) to VERIFY against the "
+                        "LinkedIn handle found in the resume — not a data source; "
+                        "a match raises confidence, a mismatch warns (no scraping)")
     p.add_argument("--projection", metavar="PATH",
                    help="projection config (YAML/JSON); omit for canonical output")
     p.add_argument("--pretty", action="store_true", help="indent JSON output")
@@ -42,11 +55,15 @@ def main(argv: list[str] | None = None) -> int:
 
     sources = [Source(type="csv", path=path) for path in args.csv]
     sources += [Source(type="resume_pdf", path=path) for path in args.resume]
+    sources += [Source(type="ats_json", path=path) for path in args.ats]
+    sources += [Source(type="notes", path=path) for path in args.notes]
+    sources += [Source(type="github", path=path) for path in args.github]
     if not sources:
         build_parser().error(
-            "at least one source is required (e.g. --csv PATH or --resume PATH)")
+            "at least one source is required "
+            "(e.g. --csv PATH, --resume PATH, --ats PATH, or --github URL)")
 
-    result = run(sources)
+    result = run(sources, linkedin_id=args.linkedin_id)
 
     if args.projection:
         cfg = load_projection(args.projection)

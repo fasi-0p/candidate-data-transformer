@@ -3,7 +3,7 @@ include_confidence: true
 include_provenance: false
 missing_value_policy: omit
 fields:
-  - { canonical: full_name,        out: candidateName }
+  - { canonical: full_name,        out: candidateNameeeeee }
   - { canonical: "emails[0]",      out: primaryEmail }
   - { canonical: "phones[0]",      out: primaryPhone }
   - { canonical: skills,           out: skillSet }

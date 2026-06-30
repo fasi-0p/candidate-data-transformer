@@ -24,6 +24,7 @@ def score(
     has_agreement: bool,
     has_conflict: bool,
     malformed: bool,
+    malformed_penalty: float = MALFORMED_PENALTY,
 ) -> float:
     value = cfg.base(source)
     if has_agreement:
@@ -31,5 +32,5 @@ def score(
     if has_conflict:
         value -= CONFLICT_PENALTY
     if malformed:
-        value -= MALFORMED_PENALTY
+        value -= malformed_penalty
     return clamp_confidence(value)

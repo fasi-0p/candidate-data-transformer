@@ -1,0 +1,172 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ---- Design tokens (Apple-minimal: lots of white, one crisp blue accent) ---- */
+:root {
+  --radius: 0.875rem;
+
+  --background: oklch(0.991 0.001 270);
+  --foreground: oklch(0.16 0.004 270);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0.004 270);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0.004 270);
+
+  --primary: oklch(0.58 0.2 256);          /* Apple blue */
+  --primary-foreground: oklch(0.99 0 0);
+
+  --secondary: oklch(0.967 0.002 270);
+  --secondary-foreground: oklch(0.22 0.004 270);
+
+  --muted: oklch(0.967 0.002 270);
+  --muted-foreground: oklch(0.55 0.008 270);
+
+  --accent: oklch(0.96 0.01 256);
+  --accent-foreground: oklch(0.3 0.05 256);
+
+  --destructive: oklch(0.58 0.21 27);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --success: oklch(0.62 0.16 150);
+  --warning: oklch(0.72 0.16 70);
+
+  --border: oklch(0.92 0.003 270);
+  --input: oklch(0.92 0.003 270);
+  --ring: oklch(0.58 0.2 256);
+}
+
+.dark {
+  --background: oklch(0.155 0.005 270);
+  --foreground: oklch(0.96 0.002 270);
+
+  --card: oklch(0.195 0.006 270);
+  --card-foreground: oklch(0.96 0.002 270);
+  --popover: oklch(0.195 0.006 270);
+  --popover-foreground: oklch(0.96 0.002 270);
+
+  --primary: oklch(0.68 0.17 256);
+  --primary-foreground: oklch(0.16 0.02 256);
+
+  --secondary: oklch(0.255 0.006 270);
+  --secondary-foreground: oklch(0.96 0.002 270);
+
+  --muted: oklch(0.255 0.006 270);
+  --muted-foreground: oklch(0.68 0.01 270);
+
+  --accent: oklch(0.28 0.03 256);
+  --accent-foreground: oklch(0.9 0.03 256);
+
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --success: oklch(0.7 0.16 150);
+  --warning: oklch(0.78 0.15 75);
+
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.68 0.17 256);
+}
+
+@theme inline {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Segoe UI', system-ui, 'Helvetica Neue', Arial, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+
+  --animate-accordion-down: accordion-down 0.25s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+@keyframes aurora-drift {
+  0%, 100% { transform: translate3d(0, -1%, 0) scale(1.02); }
+  50% { transform: translate3d(0, 1%, 0) scale(1.06); }
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.011em;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--color-primary) 25%, transparent);
+  }
+}
+
+/* A single, near-white wash behind the hero — depth without colour.
+   Apple keeps the canvas monochrome and lets type + whitespace carry it;
+   this is just a faint cool light falling from the top, never a gradient
+   you'd notice on its own. */
+.aurora {
+  position: absolute;
+  inset: -20% -20% auto -20%;
+  height: 620px;
+  filter: blur(80px);
+  opacity: 0.7;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 55% at 50% 0%,
+      color-mix(in oklch, var(--color-primary) 7%, transparent), transparent 72%),
+    radial-gradient(60% 50% at 50% 8%,
+      oklch(0.96 0.003 270), transparent 70%);
+  animation: aurora-drift 22s ease-in-out infinite;
+}
+
+.glass {
+  background: color-mix(in oklch, var(--color-card) 72%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Thin, unobtrusive scrollbars (the Apple touch). */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}

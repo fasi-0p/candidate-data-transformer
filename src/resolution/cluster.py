@@ -65,6 +65,21 @@ def _strong_ids(record: NormalizedRecord) -> tuple[set[str], set[str]]:
     return emails, phones
 
 
+def _profile_links(record: NormalizedRecord) -> set[str]:
+    """Canonical github/linkedin profile URLs — a strong identity signal.
+
+    Sharing an exact profile URL means the same person, so these block like an
+    email/phone (this is what lets a GitHub/LinkedIn *URL* source merge with the
+    CSV/resume row that already lists that profile)."""
+    urls: set[str] = set()
+    for nv in record.values("links"):
+        link = nv.value
+        if not nv.source.malformed and getattr(link, "kind", None) in (
+                "github", "linkedin"):
+            urls.add(f"{link.kind}:{link.url}")
+    return urls
+
+
 def _name(record: NormalizedRecord) -> str | None:
     return record.first_value("full_name")
 
@@ -92,13 +107,15 @@ def cluster_records(
     for i, rec in enumerate(records):
         emails[i], phones[i] = _strong_ids(rec)
 
-    # --- 1. exact-key blocking (email, phone) --------------------------------
+    # --- 1. exact-key blocking (email, phone, github/linkedin profile url) ---
     buckets: dict[tuple[str, str], list[int]] = defaultdict(list)
     for i in range(n):
         for value in emails[i]:
             buckets[("email", value)].append(i)
         for value in phones[i]:
             buckets[("phone", value)].append(i)
+        for value in _profile_links(records[i]):
+            buckets[("link", value)].append(i)
     for members in buckets.values():
         first = members[0]
         for other in members[1:]:

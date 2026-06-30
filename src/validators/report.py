@@ -15,6 +15,7 @@ from enum import Enum
 class Severity(str, Enum):
     ERROR = "error"
     WARNING = "warning"
+    INFO = "info"  # informational, never affects validity (e.g. a passed check)
 
 
 @dataclass(frozen=True, slots=True)

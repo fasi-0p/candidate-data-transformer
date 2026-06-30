@@ -1,0 +1,35 @@
+{
+  "_note": "Sample ATS export (ATS source, priority 85). Consumable via the ats_json extractor: `--ats dataset/json/ats_export.json`. Jordan Blake shares email+phone with dataset/csv/10_conflicts_vs_resume.csv and jordan_blake_match.pdf for a 3-source merge demo; Nina Patel is ATS-only.",
+  "candidates": [
+    {
+      "fullName": "Jordan Blake",
+      "email": "jordan.blake@example.com",
+      "phone": "+1 415 555 7788",
+      "currentTitle": "Software Engineer II",
+      "yearsExperience": 5,
+      "location": {"city": "Austin", "region": "Texas", "country": "United States"},
+      "skills": ["Python", "Django", "React", "GraphQL"],
+      "links": {"github": "github.com/jordanblake", "linkedin": "linkedin.com/in/jordanblake"}
+    },
+    {
+      "fullName": "Nina Patel",
+      "email": "nina.patel@example.com",
+      "phone": "9876511111",
+      "currentTitle": "Staff Infrastructure Engineer",
+      "yearsExperience": 8,
+      "location": {"city": "Bengaluru", "country": "India"},
+      "skills": ["Python", "AWS", "Terraform", "Kubernetes"],
+      "links": {"linkedin": "linkedin.com/in/ninapatel"}
+    },
+    {
+      "fullName": "Fasi Owaiz Ahmed",
+      "email": "fasiahmedpro@gmail.com",
+      "phone": "7676493497",
+      "currentTitle": "student",
+      "yearsExperience": 0.7,
+      "location": {"city": "Bengaluru", "country": "India"},
+      "skills": ["Python", "AWS", "Terraform", "Kubernetes"],
+      "links": {"linkedin": "linkedin.com/in/fasii"}
+    }
+  ]
+}

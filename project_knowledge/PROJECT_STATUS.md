@@ -4,7 +4,7 @@
 > Companion to `PROJECT_KNOWLEDGE_BASE.md` (the *what/why*) and
 > `../docs/DESIGN.md` (the *how*). This file is the **living progress tracker**.
 >
-> Last updated: 2026-06-30 · Tests: **61 passing** · ~2,170 LOC in `src/` ·
+> Last updated: 2026-06-30 · Tests: **68 passing** · ~2,250 LOC in `src/` ·
 > Git: dedicated repo in project dir, 2 commits (`56a802d`, `9525cc1`).
 
 ---
@@ -17,6 +17,8 @@
 | Data model (provenance atom, canonical, config) | ✅ Done |
 | Extractors: CSV (structured) | ✅ Done |
 | Extractors: Resume PDF (unstructured) | ✅ Done |
+| Extractors: GitHub profile JSON (priority 70) | ✅ Done |
+| GitHub/LinkedIn URL handle parsing | ✅ Done |
 | Normalization (phone/email/date/country/skill/location/link) | ✅ Done |
 | Entity resolution (blocking + union-find + fuzzy + guard) | ✅ Done |
 | Merge (deterministic, priority/agreement/conflict) | ✅ Done |
@@ -34,7 +36,7 @@
 | Git repo | ✅ Done (dedicated, committed) |
 | **Demo video** | ⬜ Not started (manual deliverable) |
 | **Push to GitHub remote** | ⬜ Not started |
-| ATS / GitHub JSON extractors | ⬜ Optional (sample data ready) |
+| ATS JSON extractor | ⬜ Optional (sample data ready in `dataset/json_future/`) |
 | Experience / Education parsing + merge | ⬜ Optional (model fields exist) |
 
 **Conclusion:** the engine is **deliverable-complete against the KB scope**
@@ -76,13 +78,20 @@ Composed in `src/pipeline.py`, each stage timed into `RunStats`.
   `parse_resume_text()`**; regex for emails/phones/links (incl. bare
   github/linkedin); heuristics for name/headline/location/skills-section/years;
   tolerant of corrupt/blank pages.
+- **`github_extractor.py`** — `@register("github_json")` (GitHub source,
+  priority 70). JSON I/O separated from a **pure `parse_github_profile()`**;
+  maps name/email/location, `html_url`+`blog` → links, `top_languages` +
+  pinned-repo languages → skills; tolerant of missing/malformed JSON (KB §18).
+  Proves the "add a source = one class + one registration line" claim end-to-end.
 
 ### 2.4 Normalization — `src/normalizers/`
 - **`fields.py`** — per-field normalizers returning `NormResult(value, ok)`:
   email (lowercase+validate), phone (E.164 via `phonenumbers`), date (`YYYY-MM`),
   country (ISO alpha-2 via `pycountry`, lru-cached), skill (alias map →
   canonical), name, years, location, link (kind inferred + **canonical URL** so
-  the same link merges across sources). Regexes compiled once; lookups memoized.
+  the same link merges across sources + **github/linkedin handle parsed** from
+  the path, e.g. `github.com/jane` → `jane`). Regexes compiled once; lookups
+  memoized.
 - **`engine.py`** — dispatches each field to its normalizer; malformed values are
   **kept and flagged**, not dropped.
 - **`data/skill_aliases.json`** — alias → canonical skill map (~40 entries).
@@ -129,10 +138,12 @@ Composed in `src/pipeline.py`, each stage timed into `RunStats`.
   edge cases (see `dataset/README.md`).
 - **`samples/`** — minimal canonical sample inputs + 2 projection configs.
 
-### 2.11 Tests — `tests/` (61 passing)
-`test_models`, `test_normalizers`, `test_merge`, `test_resolution`,
-`test_resume_extractor`, `test_validators`, `test_pipeline` (incl. **byte-for-byte
-determinism** + projection immutability), `test_api`, `test_benchmark`.
+### 2.11 Tests — `tests/` (68 passing)
+`test_models`, `test_normalizers` (incl. **url handle parsing**), `test_merge`,
+`test_resolution`, `test_resume_extractor`, `test_github_extractor` (pure parse,
+robustness, cross-source merge), `test_validators`, `test_pipeline` (incl.
+**byte-for-byte determinism** + projection immutability), `test_api`,
+`test_benchmark`.
 
 ---
 
@@ -148,15 +159,20 @@ determinism** + projection immutability), `test_api`, `test_benchmark`.
 - ⬜ Optional: CI workflow (GitHub Actions running `pytest`).
 
 ### 3.3 Optional feature extensions (all non-blocking)
-- ⬜ **ATS / GitHub JSON extractors** — sample data already in
-  `dataset/json_future/`; add `@register("ats_json")` / `@register("github_json")`
-  classes. Registry makes this isolated (no other module changes).
+- ✅ **GitHub JSON extractor** — done (`@register("github_json")`,
+  `src/extractors/github_extractor.py`; sample `dataset/json/github_profile.json`).
+- ⬜ **ATS JSON extractor** — sample data in `dataset/json_future/ats_export.json`;
+  add a `@register("ats_json")` class. Registry makes this isolated (no other
+  module changes) — same pattern the GitHub extractor just demonstrated.
 - ⬜ **Experience / Education parsing + merge** — `ExperienceItem` /
   `EducationItem` exist in the model and the resume has the sections, but the
   resume parser does not yet structure them and `merge.py` does not merge them
   (only scalar + simple collection fields today).
 - ⬜ **Expand the skill alias map** beyond the current ~40 entries.
-- ⬜ **LinkedIn source** — out of scope per KB §4 (scraping); skip.
+- ✅/⬜ **LinkedIn** — live scraping is out of scope per KB §4; LinkedIn **URL
+  parsing** (handle extraction + canonical dedup) is done. A LinkedIn data-export
+  JSON extractor could be added the same way as GitHub if a non-scraped export is
+  available.
 
 ### 3.4 Known limitations (documented, by design or minor)
 - Link columns in CSV are **not** multi-split, so multiple comma-separated URLs in
@@ -173,8 +189,10 @@ determinism** + projection immutability), `test_api`, `test_benchmark`.
 
 ```bash
 python -m pip install -e ".[api,dev]"          # setup
-python -m pytest -q                            # 61 tests
+python -m pytest -q                            # 68 tests
 python -m src.cli --csv dataset/csv/01_clean_candidates.csv --pretty
+python -m src.cli --resume dataset/resumes/alex_morgan_complete.pdf \
+    --github dataset/json/github_profile.json --stats   # cross-source merge
 python -m uvicorn src.api.app:app              # UI+API at http://127.0.0.1:8000
 python scripts/benchmark.py                    # scaling demo
 python scripts/make_dataset.py                 # regenerate resume PDFs

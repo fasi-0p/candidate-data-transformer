@@ -93,6 +93,8 @@ button:not(:disabled):hover { filter: brightness(1.08); }
   display: inline-block; padding: 1px 7px; border-radius: 10px;
   background: #eef1f4; color: var(--accent); font-size: 11px; margin-left: 6px;
 }
+.badge.ok { background: #e6f4ea; color: #1e7e34; }
+.badge.warn { background: #fdecea; color: #b3261e; }
 
 /* Confidence bar */
 .conf { display: inline-flex; align-items: center; gap: 6px; }

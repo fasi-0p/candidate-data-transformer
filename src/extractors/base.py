@@ -16,9 +16,13 @@ from ..models.intermediate import IntermediateRecord
 _REGISTRY: dict[str, type["Extractor"]] = {}
 
 
-def register(source_type: str):
+def register(*source_types: str):
+    """Register an extractor under one or more source-type names. Aliases let the
+    same extractor answer to both a short name and a descriptive one (e.g.
+    "github" and "github_json")."""
     def deco(cls: type["Extractor"]) -> type["Extractor"]:
-        _REGISTRY[source_type] = cls
+        for name in source_types:
+            _REGISTRY[name] = cls
         return cls
     return deco
 

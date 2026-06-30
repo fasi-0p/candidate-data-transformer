@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .extractors import get_extractor
+from .extractors.github_extractor import login_for_verification
 from .merger.merge import merge_clusters
 from .models.canonical import CanonicalCandidate
 from .models.config import PipelineConfig
@@ -22,6 +23,7 @@ from .normalizers.engine import normalize_record
 from .resolution.cluster import cluster_records
 from .validators.validate import validate_all
 from .validators.report import ValidationReport
+from .verify import apply_github_verification, apply_linkedin_verification
 
 
 @dataclass(slots=True)
@@ -38,7 +40,8 @@ class PipelineResult:
 
 
 def run(sources: list[Source],
-        cfg: PipelineConfig | None = None) -> PipelineResult:
+        cfg: PipelineConfig | None = None,
+        linkedin_id: str | None = None) -> PipelineResult:
     cfg = cfg or PipelineConfig()
     stats = RunStats()
 
@@ -68,6 +71,15 @@ def run(sources: list[Source],
     # Stage 7: validation (report, never throws).
     with stats.stage("validate"):
         reports = validate_all(candidates)
+        # LinkedIn id verification (not a source): cross-check the provided id
+        # against each candidate's LinkedIn handle, adjusting confidence + notes.
+        candidates = apply_linkedin_verification(candidates, reports, linkedin_id)
+        # GitHub: the provided username(s) double as verify ids — penalize a
+        # candidate whose resume GitHub handle disagrees (works even if the
+        # fetched profile didn't merge into that candidate).
+        github_ids = [h for s in sources if s.type in ("github", "github_json")
+                      if (h := login_for_verification(s.path))]
+        candidates = apply_github_verification(candidates, reports, github_ids)
 
     return PipelineResult(candidates=candidates, reports=reports, stats=stats)
 

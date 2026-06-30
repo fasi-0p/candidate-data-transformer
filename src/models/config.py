@@ -19,6 +19,7 @@ DEFAULT_SOURCE_PRIORITY: dict[str, int] = {
     "ATS": 85,
     "CSV": 80,
     "GitHub": 70,
+    "Recruiter Note": 60,  # free-form text, lowest trust — used for verification
 }
 
 DEFAULT_BASE_CONFIDENCE: dict[str, float] = {
@@ -26,12 +27,21 @@ DEFAULT_BASE_CONFIDENCE: dict[str, float] = {
     "ATS": 0.85,
     "CSV": 0.80,
     "GitHub": 0.70,
+    "Recruiter Note": 0.60,
 }
 
 # Confidence adjustments (KB §13)
 AGREEMENT_BONUS = 0.05
 CONFLICT_PENALTY = 0.10
 MALFORMED_PENALTY = 0.20
+# Skills are the primary matching signal, so wrong/inconsistent skill data is
+# costlier than a generic malformed field: a "skill" that is really a stray
+# number or a sentence-shaped extraction artifact is penalized harder (1.5x).
+SKILL_MALFORMED_PENALTY = 0.30
+# Completeness: each required section a candidate is missing lowers its overall
+# record confidence by this much (an incomplete profile is less trustworthy).
+COMPLETENESS_PENALTY = 0.15
+REQUIRED_FIELDS: tuple[str, ...] = ("skills",)
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,6 +54,9 @@ class PipelineConfig:
     fuzzy_name_threshold: int = 90      # rapidfuzz cutoff (docs/DESIGN.md §3)
     unknown_source_priority: int = 50   # for sources not in the table
     unknown_base_confidence: float = 0.50
+    completeness_penalty: float = COMPLETENESS_PENALTY
+    required_fields: tuple[str, ...] = REQUIRED_FIELDS
+    skill_malformed_penalty: float = SKILL_MALFORMED_PENALTY
 
     def priority(self, source: str) -> int:
         return self.source_priority.get(source, self.unknown_source_priority)

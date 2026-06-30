@@ -42,6 +42,18 @@ def test_skill_alias_mapping():
     assert unknown.ok and unknown.value == "Rust"
 
 
+def test_skill_implausible_flagged_malformed():
+    # Real but unrecognized multi-word skills stay valid...
+    assert F.normalize_skill("Amazon Web Services").ok is True
+    # ...while sentence-shaped noise, stray numbers, and overlong blobs are kept
+    # but flagged malformed (wrong/inconsistent skill data → penalized).
+    assert F.normalize_skill("I am proficient in many languages").ok is False
+    assert F.normalize_skill("5+").ok is False
+    assert F.normalize_skill("x" * 50).ok is False
+    # The value is preserved either way (never silently dropped).
+    assert F.normalize_skill("5+").value == "5+"
+
+
 def test_years_extracts_number():
     assert F.normalize_years("5 years").value == 5.0
     assert F.normalize_years("3.5 yrs").value == 3.5
@@ -55,11 +67,32 @@ def test_location_city_country():
     assert loc.value.city == "Bengaluru"
 
 
+def test_location_city_alias_canonicalized():
+    # "Bangalore" and "Bengaluru" normalize to the same canonical city, so they
+    # agree (rather than conflict) when merged across sources.
+    assert F.normalize_location("Bangalore, India").value.city == "Bengaluru"
+    assert (F.normalize_location("Bangalore, India").value
+            == F.normalize_location("Bengaluru, India").value)
+
+
 def test_link_kind_inferred_and_url_canonicalized():
-    # Scheme/www/trailing-slash stripped so the same link merges across sources.
-    assert F.normalize_link("https://github.com/jane").value == Link("github", "github.com/jane")
+    # Scheme/www/trailing-slash stripped so the same link merges across sources;
+    # the github/linkedin handle is parsed out of the path.
+    assert F.normalize_link("https://github.com/jane").value == Link(
+        "github", "github.com/jane", "jane")
     assert F.normalize_link("https://www.GitHub.com/jane/").value.url == "github.com/jane"
     assert F.normalize_link("https://linkedin.com/in/jane").value.kind == "linkedin"
+
+
+def test_link_handle_parsed_from_url():
+    # github: first path segment; deeper repo paths still resolve to the user.
+    assert F.normalize_link("github.com/octocat").value.handle == "octocat"
+    assert F.normalize_link("https://github.com/octocat/repo").value.handle == "octocat"
+    # linkedin: segment after /in/ (or /pub/).
+    assert F.normalize_link("https://linkedin.com/in/jane-doe-123").value.handle == "jane-doe-123"
+    # bare host or non-social URL has no handle (never invented).
+    assert F.normalize_link("https://github.com").value.handle is None
+    assert F.normalize_link("https://janedoe.dev").value.handle is None
 
 
 def test_normalize_record_dispatches_and_flags_malformed():

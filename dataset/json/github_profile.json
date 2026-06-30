@@ -1,5 +1,5 @@
 {
-  "_note": "Sample GitHub profile data. GitHub is a KB source (priority 70). A `@register('github_json')` extractor is an EXTENSION POINT, not yet wired. Forward-looking sample data.",
+  "_note": "Sample GitHub profile (GitHub source, priority 70). Consumable via the github_json extractor: `--github dataset/json/github_profile.json`. Matches alex_morgan_complete.pdf by email for a cross-source merge demo.",
   "login": "alexmorgan",
   "name": "Alex Morgan",
   "email": "alex.morgan@example.com",

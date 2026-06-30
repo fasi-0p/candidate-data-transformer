@@ -1,0 +1,22 @@
+Name: Jordan Blake
+Email: jordan.blake@example.com
+Phone: +1 415 555 7788
+Title: Software Engineer
+Years: 6
+Skills: Python, Django, React
+LinkedIn: linkedin.com/in/jordanblake
+GitHub: github.com/jordanblake
+---
+Name: Nina Patel
+Email: nina.patel@example.com
+Skills: Python, AWS, Terraform
+Location: Bengaluru, India
+===
+Spoke with Sam Rivera - solid backend dev, Go & Postgres.
+Available immediately, recommended via internal referral.
+
+~~~~
+name: fasi owaiz ahmed
+email: fasiahmedpro@gmail.com
+linkedin: linkedin.com/in/fasii
+github: github.com/fasi-0p

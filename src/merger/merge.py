@@ -16,14 +16,14 @@ from __future__ import annotations
 from typing import Any, Callable, Iterable
 
 from ..confidence.score import score
-from ..models.canonical import CanonicalCandidate, Link, Location
-from ..models.config import PipelineConfig
+from ..models.canonical import CanonicalCandidate, EducationItem, Link, Location
+from ..models.config import MALFORMED_PENALTY, PipelineConfig
 from ..models.normalized import NormalizedRecord, NormalizedValue
 from ..models.value import Conflict, TrackedValue, ValueSource
 from ..utils.ids import candidate_id
 
 _SCALAR_FIELDS = ("full_name", "headline", "years_experience", "location")
-_COLLECTION_FIELDS = ("emails", "phones", "skills", "links")
+_COLLECTION_FIELDS = ("emails", "phones", "skills", "links", "education")
 
 
 # --- helpers ------------------------------------------------------------------
@@ -35,6 +35,10 @@ def _completeness(value: Any) -> int:
         return sum(x is not None for x in (value.city, value.region, value.country))
     if isinstance(value, Link):
         return len(value.url)
+    if isinstance(value, EducationItem):
+        return sum(x is not None for x in (value.institution, value.degree,
+                                           value.field_of_study,
+                                           value.start, value.end))
     return 1
 
 
@@ -103,9 +107,13 @@ def _merge_scalar(values: list[NormalizedValue], cfg: PipelineConfig
 # --- collection merge ---------------------------------------------------------
 
 def _merge_collection(values: list[NormalizedValue], cfg: PipelineConfig,
-                      sort_key: Callable[[Any], Any]
+                      sort_key: Callable[[Any], Any],
+                      malformed_penalty: float = MALFORMED_PENALTY
                       ) -> tuple[TrackedValue, ...]:
-    # Group by distinct value; within a group all sources agree.
+    # Group by distinct value; within a group all sources agree. Distinct values
+    # in a collection are *not* conflicts (a candidate legitimately has several
+    # phones, emails, or skills) — so multiplicity is never penalized; only an
+    # individually malformed value is.
     groups: dict[Any, list[NormalizedValue]] = {}
     for nv in values:
         groups.setdefault(nv.value, []).append(nv)
@@ -121,6 +129,7 @@ def _merge_collection(values: list[NormalizedValue], cfg: PipelineConfig,
             has_agreement=bool(agreements),
             has_conflict=False,
             malformed=winner.source.malformed,
+            malformed_penalty=malformed_penalty,
         )
         tracked.append(TrackedValue(
             value=value,
@@ -138,6 +147,7 @@ _COLLECTION_SORT: dict[str, Callable[[Any], Any]] = {
     "phones": lambda v: v,
     "skills": lambda v: v.lower(),
     "links": lambda v: (v.kind, v.url),
+    "education": lambda v: (v.institution or "", v.degree or "", v.start or ""),
 }
 
 
@@ -150,8 +160,14 @@ def merge_cluster(records: list[NormalizedRecord], cfg: PipelineConfig
         for field in _SCALAR_FIELDS
     }
     collections = {
-        field: _merge_collection(_collect(records, field), cfg,
-                                 _COLLECTION_SORT[field])
+        field: _merge_collection(
+            _collect(records, field), cfg, _COLLECTION_SORT[field],
+            # Skills carry a heavier malformed penalty: wrong/inconsistent skill
+            # data is costlier than a generic unparseable field (it is the main
+            # matching signal). Phones et al. keep the standard penalty.
+            malformed_penalty=(cfg.skill_malformed_penalty if field == "skills"
+                               else MALFORMED_PENALTY),
+        )
         for field in _COLLECTION_FIELDS
     }
 
@@ -166,7 +182,22 @@ def merge_cluster(records: list[NormalizedRecord], cfg: PipelineConfig
         phones=collections["phones"],
         skills=collections["skills"],
         links=collections["links"],
+        education=collections["education"],
+        completeness_penalty=_completeness_penalty(scalars, collections, cfg),
     )
+
+
+def _completeness_penalty(scalars: dict, collections: dict,
+                          cfg: PipelineConfig) -> float:
+    """Penalty for each required section the profile is missing (cfg-driven)."""
+    missing = 0
+    for field in cfg.required_fields:
+        if field in collections:
+            if not collections[field]:
+                missing += 1
+        elif field in scalars and scalars[field] is None:
+            missing += 1
+    return cfg.completeness_penalty * missing
 
 
 def _derive_id(scalars: dict, collections: dict) -> str:

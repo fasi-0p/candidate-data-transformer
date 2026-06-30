@@ -23,8 +23,15 @@ async function run() {
   const form = new FormData();
   for (const f of $("csv").files) form.append("csv", f);
   for (const f of $("resume").files) form.append("resume", f);
-  if (!$("csv").files.length && !$("resume").files.length) {
-    $("status").textContent = "Choose at least one CSV or resume PDF.";
+  for (const f of $("ats").files) form.append("ats", f);
+  for (const f of $("notes").files) form.append("notes", f);
+  const github = $("github").value.trim();
+  const linkedin = $("linkedin").value.trim();
+  if (github) form.append("github", github);
+  if (linkedin) form.append("linkedin", linkedin);  // verify id, not a source
+  if (!$("csv").files.length && !$("resume").files.length && !$("ats").files.length
+      && !$("notes").files.length && !github) {
+    $("status").textContent = "Choose at least one CSV, resume PDF, ATS JSON, recruiter notes, or GitHub URL.";
     return;
   }
   $("status").textContent = "Running…";
@@ -76,7 +83,16 @@ function fmtValue(v) {
   return escapeHtml(String(v));
 }
 
-function field(label, tv) {
+function fmtEducation(v) {
+  if (!v || typeof v !== "object") return fmtValue(v);
+  const head = [v.degree, v.institution, v.field_of_study].filter(Boolean).join(", ");
+  const dates = [v.start, v.end].filter(Boolean).join(" – ");
+  if (!head && !dates) return '<span class="muted">—</span>';
+  return escapeHtml(head) +
+    (dates ? ` <span class="muted">(${escapeHtml(dates)})</span>` : "");
+}
+
+function field(label, tv, fmt = fmtValue) {
   if (!tv) {
     return `<div class="field"><summary><span class="label">${label}</span>` +
       `<span class="val muted">—</span><span class="src"></span></summary></div>`;
@@ -89,22 +105,36 @@ function field(label, tv) {
     detail.push(`<div class="line warn"><span class="k">note</span>kept but could not be normalized</div>`);
   for (const c of tv.conflicts || [])
     detail.push(`<div class="line conflict"><span class="k">conflict</span>` +
-      `${fmtValue(c.value)} from ${escapeHtml(c.source)} lost (${escapeHtml(c.reason)})</div>`);
+      `${fmt(c.value)} from ${escapeHtml(c.source)} lost (${escapeHtml(c.reason)})</div>`);
 
   return `<details class="field">
     <summary>
       <span class="label">${label}</span>
-      <span class="val">${fmtValue(tv.value)}${tv.conflicts && tv.conflicts.length ? '<span class="badge">conflict</span>' : ""}</span>
+      <span class="val">${fmt(tv.value)}${tv.conflicts && tv.conflicts.length ? '<span class="badge">conflict</span>' : ""}</span>
       <span class="src">${confBar(tv.confidence)}</span>
     </summary>
     <div class="detail">${detail.join("")}</div>
   </details>`;
 }
 
-function collection(label, arr) {
+function collection(label, arr, fmt = fmtValue) {
   if (!arr || !arr.length)
     return field(label, null);
-  return arr.map((tv, i) => field(i === 0 ? label : "", tv)).join("");
+  return arr.map((tv, i) => field(i === 0 ? label : "", tv, fmt)).join("");
+}
+
+function verifyBadge(rep) {
+  // Only surface mismatches — a successful verify just shows up as raised
+  // confidence, not a badge.
+  const issues = (rep && rep.issues) || [];
+  let out = "";
+  for (const [code, label] of [["linkedin_mismatch", "LinkedIn ✗"],
+                               ["github_mismatch", "GitHub ✗"]]) {
+    const issue = issues.find((i) => i.code === code);
+    if (issue)
+      out += `<span class="badge warn" title="${escapeHtml(issue.message)}">${label}</span>`;
+  }
+  return null;
 }
 
 function renderCandidates(cands, reports) {
@@ -113,7 +143,13 @@ function renderCandidates(cands, reports) {
   const reportById = {};
   for (const r of reports || []) reportById[r.candidate_id] = r;
 
-  for (const c of cands) {
+  // Inspector lists candidates by descending overall confidence (highest first).
+  // Stable id tiebreak keeps equal-confidence ordering deterministic.
+  const ordered = [...cands].sort(
+    (a, b) => (b.record_confidence - a.record_confidence)
+      || a.candidate_id.localeCompare(b.candidate_id));
+
+  for (const c of ordered) {
     const rep = reportById[c.candidate_id];
     const badge = rep && !rep.is_valid
       ? '<span class="badge warn">invalid</span>' : "";
@@ -121,7 +157,7 @@ function renderCandidates(cands, reports) {
     el.className = "candidate";
     el.innerHTML =
       `<div class="head">
-         <span class="name">${fmtValue(c.full_name && c.full_name.value)}${badge}</span>
+         <span class="name">${fmtValue(c.full_name && c.full_name.value)}</span>
          <span class="id">${escapeHtml(c.candidate_id)} · conf ${c.record_confidence}</span>
        </div>` +
       field("Headline", c.headline) +
@@ -130,7 +166,8 @@ function renderCandidates(cands, reports) {
       collection("Emails", c.emails) +
       collection("Phones", c.phones) +
       collection("Skills", c.skills) +
-      collection("Links", c.links);
+      collection("Links", c.links) +
+      collection("Education", c.education, fmtEducation);
     root.appendChild(el);
   }
 }

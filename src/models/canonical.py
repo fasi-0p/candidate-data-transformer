@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .value import TrackedValue
+from .value import TrackedValue, clamp_confidence
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,6 +25,7 @@ class Location:
 class Link:
     kind: str  # "github", "linkedin", "portfolio", ...
     url: str
+    handle: str | None = None  # parsed username for github/linkedin (KB §10)
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,10 +65,14 @@ class CanonicalCandidate:
     skills: tuple[TrackedValue[str], ...] = field(default=())
     experience: tuple[TrackedValue[ExperienceItem], ...] = field(default=())
     education: tuple[TrackedValue[EducationItem], ...] = field(default=())
+    # Sum of completeness penalties for required sections this profile is missing
+    # (set by merge from PipelineConfig); subtracted from record_confidence below.
+    completeness_penalty: float = 0.0
 
     @property
     def record_confidence(self) -> float:
-        """Derived, never stored — the mean of all field confidences.
+        """Derived, never stored — the mean of all field confidences, less any
+        completeness penalty for missing required sections.
 
         Kept as a computed property so it cannot drift from the underlying
         values it summarizes (docs/DESIGN.md §5).
@@ -86,4 +91,4 @@ class CanonicalCandidate:
             scores.extend(tv.confidence for tv in collection)
         if not scores:
             return 0.0
-        return sum(scores) / len(scores)
+        return clamp_confidence(sum(scores) / len(scores) - self.completeness_penalty)
