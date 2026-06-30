@@ -106,7 +106,7 @@ def _add_links(record: IntermediateRecord, text: str) -> None:
 
 
 def _looks_like_name(line: str) -> bool:
-    if "@" in line or "http" in line.lower():
+    if "@" in line or "," in line or "http" in line.lower():
         return False
     words = line.split()
     if not (1 <= len(words) <= 4):
@@ -118,7 +118,7 @@ def _looks_like_name(line: str) -> bool:
 def _add_name(record: IntermediateRecord, nonempty: list[str]) -> int:
     for i, line in enumerate(nonempty[:5]):
         if _SECTION_RE.match(line):
-            break  # the name lives in the header, before any section starts
+            continue  # skip header-ish lines (e.g. "Contact:"); keep scanning
         if _looks_like_name(line):
             record.fields["full_name"] = RawField(line, method="pdf_text")
             return i

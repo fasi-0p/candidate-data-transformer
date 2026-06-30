@@ -1,0 +1,3 @@
+name,email,phone,location,headline,years_experience,skills,github,linkedin
+Jordan Blake,jordan.blake@example.com,+14155557788,"Austin, US",Software Engineer,4,"Python, Django, React",https://github.com/jordanblake,https://linkedin.com/in/jordanblake
+Sam Rivera,sam.rivera@example.com,9876522222,"Bangalore, India",Junior Developer,2,"Java, Spring",https://github.com/samrivera,

@@ -1,0 +1,6 @@
+name,email,phone,location,headline,years_experience,skills,github,linkedin
+Aarav Sharma,aarav.sharma@gmail.com,9876543210,"Bengaluru, India",Senior ML Engineer,7,"Machine Learning, Python, TensorFlow",https://github.com/aaravsharma,https://linkedin.com/in/aaravsharma
+Emily Carter,emily.carter@example.com,+14155550123,"San Francisco, US",Backend Engineer,5,"Go, Kubernetes, PostgreSQL",https://github.com/emilyc,https://linkedin.com/in/emilycarter
+Liam O'Brien,liam.obrien@example.co.uk,+447911123456,"London, United Kingdom",Full Stack Developer,4,"TypeScript, React, Node.js",https://github.com/liamob,https://linkedin.com/in/liamobrien
+Sofia Rossi,sofia.rossi@example.it,+393331234567,"Milan, Italy",Data Scientist,6,"Python, NLP, PyTorch",https://github.com/sofiarossi,https://linkedin.com/in/sofiarossi
+Kenji Tanaka,kenji.tanaka@example.jp,+819012345678,"Tokyo, Japan",DevOps Engineer,8,"Docker, AWS, Kubernetes",https://github.com/kenjit,https://linkedin.com/in/kenjitanaka

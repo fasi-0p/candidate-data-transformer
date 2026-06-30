@@ -58,6 +58,14 @@ def test_parser_does_not_mistake_section_header_for_name():
     assert "full_name" not in rec.fields
 
 
+def test_parser_finds_name_after_a_contact_header_line():
+    # A leading "Contact:" line must not abort name detection (messy layouts).
+    text = ("Contact: reach me at a@b.com or c@d.com\n"
+            "Robin Fisher\nSenior Cloud Architect\n")
+    rec = parse_resume_text(text)
+    assert rec.fields["full_name"].value == "Robin Fisher"
+
+
 @pytest.mark.skipif(not RESUME_PDF.exists(),
                     reason="run scripts/make_sample_resume.py to create the PDF")
 def test_csv_plus_resume_merge_into_one_candidate():

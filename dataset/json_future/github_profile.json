@@ -1,0 +1,14 @@
+{
+  "_note": "Sample GitHub profile data. GitHub is a KB source (priority 70). A `@register('github_json')` extractor is an EXTENSION POINT, not yet wired. Forward-looking sample data.",
+  "login": "alexmorgan",
+  "name": "Alex Morgan",
+  "email": "alex.morgan@example.com",
+  "blog": "https://alexmorgan.io",
+  "location": "Seattle, USA",
+  "html_url": "https://github.com/alexmorgan",
+  "top_languages": ["Python", "Go", "TypeScript"],
+  "pinned_repos": [
+    {"name": "etl-engine", "language": "Python"},
+    {"name": "k8s-operator", "language": "Go"}
+  ]
+}

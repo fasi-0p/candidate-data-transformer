@@ -1,0 +1,4 @@
+internal_id,name,salary,email,phone,notes,skills,security_clearance,linkedin
+EMP-001,Nina Patel,120000,nina.patel@example.com,9876511111,"Top performer, relocating","Python, AWS, Terraform",confidential,https://linkedin.com/in/ninapatel
+EMP-002,Oscar Wright,98000,oscar.wright@example.com,+14155559999,"Prefers remote","Ruby, Rails, Redis",none,https://linkedin.com/in/oscarwright
+EMP-003,Yuki Sato,,yuki.sato@example.jp,+819098765432,,"React, Next.js, GraphQL",,https://linkedin.com/in/yukisato

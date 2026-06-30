@@ -1,0 +1,7 @@
+name,email,mobile,country,title,yoe,skillset,github,linkedin
+Ravi Kumar,ravi.kumar@example.com,9123456789,India,ML Engineer,5,"ml, py, reactjs, k8s, postgres",github.com/ravikumar,linkedin.com/in/ravikumar
+Ravi  Kumar,ravi.kumar@example.com,9123456789,IN,Machine Learning Engineer,5,"machine-learning, python3, react, kubernetes",https://github.com/ravikumar,
+Anna Schmidt,anna.schmidt@example.de,+4915123456789,Deutschland,Backend Dev,6,"golang, postgresql, docker, AWS",github.com/annaschmidt,linkedin.com/in/annaschmidt
+Chen Wei,chen.wei@example.cn,+8613912345678,China,AI Researcher,7,"ai, dl, nlp, cv, tensorflow",https://github.com/chenwei,
+Jose Martinez,jose.martinez@example.mx,+5215512345678,Mexico,Fullstack,4,"js, ts, nodejs, graphql, mongo",github.com/josemartinez,linkedin.com/in/josemartinez
+Tom Becker,tom.becker@example.com,+12025550178,U.S.A.,Systems Engineer,10,"cpp, c++, csharp, c#",github.com/tombecker,

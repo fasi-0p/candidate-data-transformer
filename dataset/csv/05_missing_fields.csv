@@ -1,0 +1,8 @@
+name,email,phone,location,headline,years_experience,skills,github,linkedin
+Only Name,,,,,,,,
+,onlyemail@example.com,,,,,,,
+,,9876500001,,,,,,
+Partial One,partial.one@example.com,,,"Engineer",,"Python",,
+Partial Two,,9876500002,"Remote",,,"Go, Rust",,
+No Skills Person,noskills@example.com,9876500003,"Berlin, Germany",Architect,12,,https://github.com/noskills,
+Headline Only,,,,Visionary Leader,,,,

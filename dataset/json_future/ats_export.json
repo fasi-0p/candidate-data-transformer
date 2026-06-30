@@ -1,0 +1,25 @@
+{
+  "_note": "Sample ATS export. The KB lists ATS as a source (priority 85), but an ATS JSON extractor is a documented EXTENSION POINT and is not wired yet. This file is forward-looking sample data for when `@register('ats_json')` is added.",
+  "candidates": [
+    {
+      "fullName": "Jordan Blake",
+      "email": "jordan.blake@example.com",
+      "phone": "+1 415 555 7788",
+      "currentTitle": "Software Engineer II",
+      "yearsExperience": 5,
+      "location": {"city": "Austin", "country": "United States"},
+      "skills": ["Python", "Django", "React", "GraphQL"],
+      "links": {"github": "github.com/jordanblake"}
+    },
+    {
+      "fullName": "Nina Patel",
+      "email": "nina.patel@example.com",
+      "phone": "9876511111",
+      "currentTitle": "Staff Infrastructure Engineer",
+      "yearsExperience": 8,
+      "location": {"city": "Bengaluru", "country": "India"},
+      "skills": ["Python", "AWS", "Terraform", "Kubernetes"],
+      "links": {"linkedin": "linkedin.com/in/ninapatel"}
+    }
+  ]
+}

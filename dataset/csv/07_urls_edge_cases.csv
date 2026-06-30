@@ -1,0 +1,8 @@
+name,email,github,linkedin,portfolio,website
+Schemed Url,schemed@example.com,https://github.com/schemeduser,https://www.linkedin.com/in/schemeduser/,https://schemed.dev,
+Bare Url,bare@example.com,github.com/bareuser,linkedin.com/in/bareuser,,bare.example.com
+Www And Slash,wws@example.com,https://www.GitHub.com/WwsUser/,https://linkedin.com/in/wwsuser,,
+Dup Formats,dup@example.com,github.com/dupuser,https://github.com/dupuser,,
+Trailing Slashes,trailing@example.com,https://github.com/trailing/,https://www.linkedin.com/in/trailing/,https://trailing.io/,
+Garbage Link,garbage@example.com,not a real url,n/a,ftp://old.server/path,
+Multiple Links,multi@example.com,https://github.com/multi,https://linkedin.com/in/multi,"https://multi.dev, https://blog.multi.dev",

@@ -1,0 +1,9 @@
+name,email,phone,location,headline,years_experience,skills,github,linkedin
+Bad Email,not-an-email,9876543210,"Delhi, India",Engineer,5,"Python, Go",https://github.com/bad,
+No At Sign,john.example.com,9876543211,"Pune, India",Developer,3,"Java",,
+Bad Phone,valid@example.com,123,"Chennai, India",Analyst,2,"SQL, Excel",,
+Letters Phone,letters@example.com,call-me-maybe,"Kolkata, India",Designer,4,"Figma",,
+Bad Years,years@example.com,9876543212,"Hyderabad, India",Manager,five years,"Leadership",,
+Whitespace Mess ,  spaced@example.com  ,  9876543213  ,"  Jaipur , India  ",  Senior Engineer  ,  6  ,"  python , , go ,  ",,
+Empty Skills,emptyskills@example.com,9876543214,"Goa, India",Consultant,,,,
+Weird Chars,weird+tag@example.com,+91 (987) 654-3215,"Surat, India","Engineer, Lead",7,"C++, Node.js",https://github.com/weird,

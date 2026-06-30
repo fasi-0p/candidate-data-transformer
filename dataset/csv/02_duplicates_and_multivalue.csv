@@ -1,0 +1,5 @@
+name,email,phone,location,headline,years_experience,skills,github,linkedin
+Priya Nair,priya@startup.io;priya.nair@gmail.com,9988776655;9988776600,"Mumbai, India",Data Scientist,3,"Python, NLP, Python, Machine Learning, NLP",,https://linkedin.com/in/priyanair
+Priya Nair,priya@startup.io,9988776655,"Mumbai, India",Senior Data Scientist,4,"Python, TensorFlow",https://github.com/priyanair,
+Marcus Lee,marcus.lee@example.com,+6591234567,"Singapore, Singapore",Engineer,5,"Java, Java, Spring, spring",https://github.com/marcuslee,https://linkedin.com/in/marcuslee
+Marcus Lee,MARCUS.LEE@example.com,+6591234567,"Singapore, Singapore",Engineering Manager,9,"Java, Leadership",https://github.com/marcuslee,https://linkedin.com/in/marcuslee
