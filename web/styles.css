@@ -1,0 +1,117 @@
+/* Minimal, neutral theme. System fonts, grayscale, one muted accent.
+   The UI is an instrument for reading the engine's output, not decoration. */
+:root {
+  --bg: #fafafa;
+  --panel: #ffffff;
+  --ink: #1c1c1e;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --accent: #3b5b7a;
+  --hi: #2f8f5b;   /* high confidence */
+  --mid: #b9892f;  /* medium */
+  --lo: #b4544e;   /* low */
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+header {
+  padding: 28px 32px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+header h1 { margin: 0; font-size: 20px; font-weight: 600; }
+header .sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+main {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 32px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px 22px;
+}
+.panel h2 { margin: 0 0 12px; font-size: 15px; font-weight: 600; }
+.hint, .status, .stats { color: var(--muted); font-size: 13px; }
+.hint { margin: -4px 0 14px; }
+
+.row { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+input[type=file], select {
+  font: inherit; padding: 6px 8px; border: 1px solid var(--line);
+  border-radius: 6px; background: #fff; color: var(--ink);
+}
+
+button {
+  font: inherit; padding: 8px 16px; border: 1px solid var(--accent);
+  background: var(--accent); color: #fff; border-radius: 6px; cursor: pointer;
+}
+button:disabled { opacity: .45; cursor: default; }
+button:not(:disabled):hover { filter: brightness(1.08); }
+
+.status { margin: 12px 0 0; }
+.stats { margin: 4px 0 0; font-variant-numeric: tabular-nums; }
+
+/* Candidate cards */
+.candidate {
+  border: 1px solid var(--line); border-radius: 8px;
+  margin-top: 14px; overflow: hidden;
+}
+.candidate > .head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; background: #f6f7f8; border-bottom: 1px solid var(--line);
+}
+.candidate .name { font-weight: 600; }
+.candidate .id { color: var(--muted); font-size: 12px; font-family: ui-monospace, monospace; }
+
+.field { border-bottom: 1px solid var(--line); }
+.field:last-child { border-bottom: none; }
+.field > summary {
+  list-style: none; cursor: pointer; padding: 9px 16px;
+  display: grid; grid-template-columns: 130px 1fr 120px; gap: 12px; align-items: center;
+}
+.field > summary::-webkit-details-marker { display: none; }
+.field[open] > summary { background: #fbfbfc; }
+.field .label { color: var(--muted); font-size: 13px; }
+.field .val { font-size: 14px; word-break: break-word; }
+.field .val .muted { color: var(--muted); }
+.field .src { font-size: 11px; color: var(--muted); text-align: right; }
+.badge {
+  display: inline-block; padding: 1px 7px; border-radius: 10px;
+  background: #eef1f4; color: var(--accent); font-size: 11px; margin-left: 6px;
+}
+
+/* Confidence bar */
+.conf { display: inline-flex; align-items: center; gap: 6px; }
+.conf .track { width: 64px; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.conf .fill { height: 100%; }
+.conf.hi .fill { background: var(--hi); }
+.conf.mid .fill { background: var(--mid); }
+.conf.lo .fill { background: var(--lo); }
+.conf .num { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.detail { padding: 4px 16px 14px; font-size: 13px; }
+.detail .line { margin: 3px 0; }
+.detail .k { color: var(--muted); display: inline-block; min-width: 92px; }
+.conflict { color: var(--lo); }
+.agree { color: var(--hi); }
+
+.output {
+  margin: 14px 0 0; padding: 14px; background: #1c1f24; color: #e6e6e6;
+  border-radius: 8px; font: 12.5px/1.5 ui-monospace, SFMono-Regular, monospace;
+  overflow-x: auto; max-height: 420px;
+}
+.warn { color: var(--lo); }

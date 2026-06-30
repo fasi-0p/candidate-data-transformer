@@ -1,0 +1,12 @@
+name: "ATS Export v1"
+include_confidence: true
+include_provenance: false
+missing_value_policy: omit
+fields:
+  - { canonical: full_name,        out: candidateName }
+  - { canonical: "emails[0]",      out: primaryEmail }
+  - { canonical: "phones[0]",      out: primaryPhone }
+  - { canonical: skills,           out: skillSet }
+  - { canonical: years_experience, out: yoe }
+  - { canonical: "location.country", out: country }
+  - { canonical: headline,         out: title }

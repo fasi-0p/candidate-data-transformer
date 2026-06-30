@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Candidate Data Transformation Engine</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Candidate Data Transformation Engine</h1>
+    <p class="sub">Heterogeneous sources &rarr; one canonical, explainable profile.</p>
+  </header>
+
+  <main>
+    <!-- Panel 1: Upload & Run -->
+    <section class="panel">
+      <h2>1 &middot; Upload &amp; Run</h2>
+      <div class="row">
+        <label>CSV
+          <input type="file" id="csv" accept=".csv" multiple />
+        </label>
+        <label>Resume PDF
+          <input type="file" id="resume" accept=".pdf" multiple />
+        </label>
+        <button id="run">Run pipeline</button>
+      </div>
+      <p id="status" class="status"></p>
+      <p id="stats" class="stats"></p>
+    </section>
+
+    <!-- Panel 2: Canonical Inspector -->
+    <section class="panel">
+      <h2>2 &middot; Canonical Inspector</h2>
+      <p class="hint">Every field is traceable. Expand a field to see the winning
+        source, agreements, and the conflicts that lost &mdash; with reasons.</p>
+      <div id="candidates"></div>
+    </section>
+
+    <!-- Panel 3: Projection Output -->
+    <section class="panel">
+      <h2>3 &middot; Projection Output</h2>
+      <p class="hint">The canonical model is never modified &mdash; projection
+        only reshapes a copy.</p>
+      <div class="row">
+        <label>Schema
+          <select id="projection"></select>
+        </label>
+        <button id="apply" disabled>Apply projection</button>
+      </div>
+      <pre id="output" class="output"></pre>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

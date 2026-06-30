@@ -1,0 +1,4 @@
+name,email,phone,location,headline,years_experience,skills,github,linkedin
+Jane Doe,Jane.Doe@Gmail.com,9876543210,"Bengaluru, India",Senior ML Engineer,6,"ML, Python, reactjs",https://github.com/janedoe,https://linkedin.com/in/janedoe
+John Smith,john.smith@example.com,+14155550123,"San Francisco, US",Backend Engineer,4,"Go, k8s, postgres",https://github.com/jsmith,
+Priya Nair,priya@startup.io;priya.nair@gmail.com,9988776655,"Mumbai, India",Data Scientist,3,"nlp, python3, tensorflow",,https://linkedin.com/in/priyanair

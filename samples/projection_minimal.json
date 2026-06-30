@@ -1,0 +1,11 @@
+{
+  "name": "Minimal Card",
+  "include_confidence": false,
+  "include_provenance": false,
+  "missing_value_policy": "null",
+  "fields": [
+    { "canonical": "full_name", "out": "name" },
+    { "canonical": "emails[0]", "out": "email" },
+    { "canonical": "headline", "out": "role" }
+  ]
+}
