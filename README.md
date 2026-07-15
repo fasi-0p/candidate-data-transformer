@@ -23,9 +23,6 @@ python -m uvicorn src.api.app:app          # then open http://127.0.0.1:8000
 cd frontend
 npm run dev                                # then open http://localhost:5173
 ```
-## 🎥 Demo Video
-
-[![Watch Demo](https://img.shields.io/badge/▶%20Watch-Demo-blue?style=for-the-badge)](https://drive.google.com/file/d/1IHl_6WbebPU8REyEFb0fIDU1LyG1ePDC/view?usp=drivesdk)
 
 ```
    📄 CSV ─┐
